@@ -1,0 +1,151 @@
+img {
+    width: 100%;
+    height: auto;
+}
+
+#section-title {
+    display: flex;
+}
+
+#section-title>section {
+    width: 50%;
+    text-align: center;
+    color: gray;
+}
+
+#section-title>section span {
+    display: inline-block;
+    padding: 2px 3px 5px 3px;
+}
+
+#section-title>section.active span {
+    color: black;
+    border-bottom: 2px solid black;
+}
+
+#filter-add {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 7px;
+}
+
+#filter-add input {
+    margin-right: 5px;
+}
+
+section.m-section {
+    padding: 6px;
+    overflow-y: auto;
+}
+
+section#s1 {
+    height: calc(100vh - 100px);
+}
+
+section#s1 article {
+    display: flex;
+    align-items: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+section#s1 article .wrap-photo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+section#s1 article img {
+    width: 60px;
+    height: 60px;
+}
+
+section#s1 article .wrap-name {
+    width: calc(100% - 140px);
+    overflow: hidden;
+    padding: 3px;
+}
+
+section#s1 article .wrap-name a {
+    text-decoration: underline;
+    color: blue;
+}
+
+section#s1 article .actions {
+    width: 80px;
+    font-size: 25px;
+}
+
+section#s1 article .actions .bi-pencil-square {
+    color: green;
+}
+
+section#s1 article .actions .bi-trash3-fill {
+    color: red;
+}
+
+section#s2 .actions {
+    padding-bottom: 3px;
+    border-bottom: 2px solid gray;
+    margin-bottom: 5px;
+    font-size: 20px;
+}
+
+section#s2 #list-series {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: calc(100vh - 135px);
+    overflow-y: auto;
+}
+
+section#s2 a {
+    display: block;
+    width: calc(100% / 3);
+    height: 180px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    background: gainsboro;
+}
+
+section#s2 a img {
+    height: 100%;
+    width: auto;
+}
+
+section#s2 a .icon-delete {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    right: 0;
+    font-size: 40px;
+    color: red;
+}
+
+
+
+.modal {
+    display: block !important;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#modal1 #wrap-image-upload {
+    position: relative;
+    margin-top: 5px;
+}
+
+#modal1 #wrap-image-upload .bi-x-circle {
+    position: absolute;
+    z-index: 10;
+    top: -2px;
+    right: 5px;
+    cursor: pointer;
+    font-size: 25px;
+    color: red;
+}

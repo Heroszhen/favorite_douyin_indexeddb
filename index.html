@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="Douyin_icon.png">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+    <link href="style.css" rel="stylesheet">
+
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.1/iconify-icon.min.js"></script>
+
+    <title>Guide</title>
+</head>
+
+<body>
+    <div x-data="douyin">
+        <div id="section-title">
+            <section :class="{'active':section==1}" @click="switchSection(1)"><span>Abonnés</span></section>
+            <section :class="{'active':section==2}" @click="switchSection(2)"><span>Aimés</span></section>
+        </div>
+        <div id="filter-add">
+            <input class="form-control form-control-sm" type="search" placeholder="rechercher" x-ref="input_search"
+                name="keywords" x-model="keywords" @keyup="sortByKeywords()">
+            <button type="button" class="btn btn-info btn-sm text-white" @click="switchModal(1)">Ajouter</button>
+        </div>
+
+        <section id="s1" class="m-section" x-show="section==1">
+            <template x-for="(item, index) in alllinks">
+                <article x-show="item['filter']==null || item['filter']!='false'">
+                    <div class="wrap-photo">
+                        <img :src="item['photo']">
+                    </div>
+                    <div class="wrap-name">
+                        <a :href="item.url" target="_blank" x-text="item.name"></a>
+                    </div>
+                    <div class="actions">
+                        <i class="bi bi-pencil-square me-3" @click="switchModal(1,index)"></i>
+                        <i class="bi bi-trash3-fill" @click="deleteLink(index)"></i>
+                    </div>
+                </article>
+            </template>
+        </section>
+
+        <section id="s2" class="m-section" x-show="section==2">
+            <div class="actions">
+                <iconify-icon icon="fluent:delete-dismiss-24-filled" @click="switchCanDelete()"></iconify-icon>
+            </div>
+            <div id="list-series">
+                <template x-for="(item, index) in allseries">
+                    <a x-show="item['filter']==null || item['filter']!='false'" :href="item['url']" target="_blank">
+                        <div x-show="canDelete==true" class="icon-delete" @click.prevent="deleteOneSeries(index)">
+                            <iconify-icon icon="fluent:delete-48-filled"></iconify-icon>
+                        </div>
+                        <img :src="item['photo']">
+                    </a>
+                </template>
+            </div>
+        </section>
+
+        <!-- Modal -->
+        <template x-if="linkM != null && modal == 1">
+            <div class="modal fade show" id="modal1" data-bs-backdrop="static" tabindex="-1"
+                aria-labelledby="exampleModalLabel" arial-modal="true" role="dialog">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Editer un favori</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                @click="switchModal(0)"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="form-link" autocomplete="off" x-on:submit="editLink($event)">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Nom</label>
+                                    <input class="form-control form-control-sm" type="text" placeholder="name"
+                                        name="name" id="name" x-model="linkM['name']">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="url" class="form-label">Lien</label>
+                                    <input class="form-control form-control-sm" type="text" placeholder="url" name="url"
+                                        id="url" x-model="linkM['url']">
+                                </div>
+                                <div class="mb-3">
+
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" placeholder="description" name="description"
+                                        id="description" x-model="linkM['description']"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="formFileSm" class="form-label">Photo</label>
+                                    <input class="form-control form-control-sm" id="formFileSm" type="file"
+                                        @change="handleLinkMPhoto($event)">
+                                    <div id="wrap-image-upload">
+                                        <i class="bi bi-x-circle" id="deleteimage" @click="deleteLinkMPhoto()"></i>
+                                        <img :src="linkM['photo']" alt="" id="image-to-upload" class="mt-2"
+                                            x-show="linkM['photo'] != ''">
+                                    </div>
+                                </div>
+                                <div class="mb-3 text-center">
+                                    <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template x-if="seriesM != null && modal == 2">
+            <div class="modal fade show" id="modal2" data-bs-backdrop="static" tabindex="-1"
+                aria-labelledby="exampleModalLabel" arial-modal="true" role="dialog">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Editer une video</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                @click="switchModal(0)"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="form-series" autocomplete="off" x-on:submit="editSeries($event)">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Nom</label>
+                                    <input class="form-control form-control-sm" type="text" placeholder="name"
+                                        name="name" id="name" x-model="seriesM['name']">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="url" class="form-label">Lien</label>
+                                    <input class="form-control form-control-sm" type="text" placeholder="url" name="url"
+                                        id="url" x-model="seriesM['url']">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="formFileSm" class="form-label">Photo</label>
+                                    <input class="form-control form-control-sm" id="formFileSm" type="file"
+                                        @change="handleLinkMPhoto($event)">
+                                    <div id="wrap-image-upload">
+                                        <img :src="seriesM['photo']" alt="" id="image-to-upload" class="mt-2"
+                                            x-show="seriesM['photo'] != ''">
+                                    </div>
+                                </div>
+                                <div class="mb-3 text-center">
+                                    <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+    <script src="js/db.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/Link.js"></script>
+    <script src="js/Series.js"></script>
+    <script src="js/index.js"></script>
+
+</body>
+
+</html>
